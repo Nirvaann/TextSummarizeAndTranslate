@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Summarizer</title>
+    <style>
+        body {
+            background: #f4f6fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 40px 24px 40px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2d3a4b;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-size: 1rem;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #cfd8dc;
+            background: #f9fbfd;
+        }
+        label {
+            margin-right: 8px;
+            color: #455a64;
+        }
+        select, input[type="number"] {
+            width: 120px;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #cfd8dc;
+            background: #f9fbfd;
+            margin-right: 16px;
+        }
+        button {
+            width: 160px;
+            align-self: center;
+            padding: 10px 0;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        .summary-section {
+            margin-top: 32px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .summary-section h2 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .detected-lang {
+            color: #607d8b;
+            font-size: 0.98em;
+        }
+        .nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            margin: 0 10px;
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            |
+            <a href="/">Summarizer</a> | 
+            <a href="/translate">Translator</a> | 
+        </div>
+        <h1>Text Summarizer</h1>
+        <form method="post" action="/">
+            <textarea name="text" rows="10" cols="80" placeholder="Enter your text here..." required>{{ request.form.text or '' }}</textarea>
+            <div>
+                <label for="min_length">Min Length of Summary:</label>
+                <input type="number" name="min_length" value="{{ request.form.min_length or 30 }}" min="10" max="100">
+                <label for="max_length">Max Length of Summary:</label>
+                <input type="number" name="max_length" value="{{ request.form.max_length or 150 }}" min="50" max="500">
+            </div>
+            <div>
+                <label for="target_lang">Summarize to language:</label>
+                <select name="target_lang" id="target_lang">
+                    <option value="en" {% if request.form.target_lang == "en" %}selected{% endif %}>English</option>
+                    <option value="hi" {% if request.form.target_lang == "hi" %}selected{% endif %}>Hindi</option>
+                    <option value="fr" {% if request.form.target_lang == "fr" %}selected{% endif %}>French</option>
+                    <option value="de" {% if request.form.target_lang == "de" %}selected{% endif %}>German</option>
+                    <option value="es" {% if request.form.target_lang == "es" %}selected{% endif %}>Spanish</option>
+                    <option value="ru" {% if request.form.target_lang == "ru" %}selected{% endif %}>Russian</option>
+                    <option value="tr" {% if request.form.target_lang == "tr" %}selected{% endif %}>Turkish</option>
+                </select>
+            </div>
+            <button type="submit" name="action" value="summarize">Summarize</button>
+        </form>
+        {% if summary %}
+        <div class="summary-section">
+            <h2>Summary</h2>
+            <p>{{ summary }}</p>
+            <p class="detected-lang">Detected Language: {{ detected_language }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
